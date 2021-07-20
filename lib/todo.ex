@@ -48,6 +48,37 @@ defmodule Todo do
 end
 
 
+
+
+defmodule Todo.CsvImporter do
+  # CSV Format:
+  # 20/1/20,feed dogs
+  # 20/1/20,throw trash
+  # 21/1/20,buy bread
+  # 21/1/20,do homework
+
+  def import_todo(filename) do
+    filename
+      |> File.stream!()
+      |> Enum.map(&(String.split(&1, ",")))
+      |> Enum.map(&parse_line/1)
+      |> Todo.new
+  end
+
+  defp parse_line([date, text]) do
+    %{
+      date: parse_date(date),
+      text: String.trim(text)
+    }
+  end
+
+  defp parse_date(date) do
+    [day, month, year] = String.split(date, "/")
+    {day, month, year}
+  end
+end
+
+
 Todo.new
   |> Todo.add_item(%{text: "new item"})
   |> Todo.add_item(%{text: "new item2"})
@@ -62,3 +93,4 @@ items = [
   %{text: "Item 4"},
 ]
 Todo.new(items)
+Todo.CsvImporter.import_todo("mytodo.csv")
