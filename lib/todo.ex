@@ -73,7 +73,7 @@ defmodule Todo.CsvImporter do
   end
 
   defp parse_date(date) do
-    [day, month, year] = String.split(date, "/")
+    [day, month, year] = String.split(date, "/") |> Enum.map(&String.to_integer/1)
     {day, month, year}
   end
 end
